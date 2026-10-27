@@ -1,0 +1,19 @@
+{
+  "nwyfre.configuration.title": "Nwyfre Configs",
+  "nwyfre.configuration.section.nwyfre.common.toml": "Nwyfre Configs",
+  "nwyfre.configuration.section.nwyfre.common.toml.title": "Nwyfre Configs",
+  "nwyfre.configuration.items": "Item List",
+  "nwyfre.configuration.logDirtBlock": "Log Dirt Block",
+  "nwyfre.configuration.magicNumberIntroduction": "Magic Number Text",
+  "nwyfre.configuration.magicNumber": "Magic Number",
+
+  "book.nwyfre.book_of_nwyfre.name": "Book of Nwyfre",
+  "book.nwyfre.book_of_nwyfre.subtitle": "Of Breath and Spirit",
+  "book.nwyfre.book_of_nwyfre.landing_text": "The life-breath moves through all things. Learn to hear it, and it will answer.",
+
+  "nwyfre.category.getting_started": "First Breath",
+  "nwyfre.category.getting_started.desc": "Where the study of $(thing)Nwyfre$() begins.",
+
+  "nwyfre.entry.about": "On Nwyfre",
+  "nwyfre.entry.about.page1": "$(thing)Nwyfre$() is the life-breath that runs beneath the world - in stone and storm, in root and blood.$(br2)This book fills itself as you learn. What you have not yet earned, you will not yet read."
+}

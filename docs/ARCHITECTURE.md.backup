@@ -1,0 +1,351 @@
+# Nwyfre — Architecture & Development Notes
+
+Working notes for developing Nwyfre. `CLAUDE.md` holds the *rules*; this file holds the *how* —
+where things live, how the pieces fit, and the recipes for extending each system.
+
+Keep this current as systems land. If a section here disagrees with the code, the code wins — fix
+the doc.
+
+---
+
+## Contents
+
+- [Project layout](#project-layout)
+- [Testing layers](#testing-layers)
+- [Test data vs. production data](#test-data-vs-production-data)
+- [Game stages](#game-stages)
+- [Persistent player data](#persistent-player-data)
+- [Networking](#networking)
+- [Patchouli book layout](#patchouli-book-layout)
+- [Integration dependency policy](#integration-dependency-policy)
+- [Live Traps](#gotchas-already-paid-for)
+
+---
+
+## Project layout
+
+| Path | Ships in jar? | Purpose |
+| :--- | :--- | :--- |
+| `src/main/java` | **Yes** | Production code. |
+| `src/main/resources` | **Yes** | Production assets and data, including the real Patchouli book. |
+| `src/test/java` | No | Headless JUnit. No Minecraft server; runs in seconds. |
+| `src/test/resources` | No | Fixtures for JUnit — stub books and the like. |
+| `src/gametest/java` | **No** | In-game GameTests, run against a live server. |
+| `src/gametest/resources` | **No** | Fixtures GameTests need, e.g. structure templates. |
+| `src/generated/resources` | **Yes** | Datagen output. Do not hand-edit. |
+
+`src/gametest` is its own source set, registered with the mod for dev runs but never packed — the
+`jar` task only sees `src/main`. See the `sourceSets` and `addModdingDependenciesTo` wiring in
+`build.gradle`.
+
+### Production packages
+
+| Package | Holds |
+| :--- | :--- |
+| `com.nwyfre.nwyfre` | Mod entry point, client entry point, config. |
+| `...registry` | `DeferredRegister` holders (attachments, and later items/blocks/entities). |
+| `...stage` | The game stage system and its public API. |
+| `...network` | Payload definitions and registration. |
+| `...client` | Client-only code. **Must never be loaded on a dedicated server.** |
+
+New packages are created when the first real class needs them — not ahead of time.
+
+---
+
+## Testing layers
+
+Three layers, each with a different job. Pick the cheapest one that can actually catch the bug.
+
+| Layer | Command | Use it for |
+| :--- | :--- | :--- |
+| JUnit | `./gradlew test` | Pure logic, codecs, data-file lints. Seconds. |
+| GameTest | `./gradlew runGameTestServer` | Anything needing a live server, world, or real player. |
+| Manual | `./gradlew runClient` | Rendering, GUIs, feel. |
+
+**Prefer JUnit.** Reach for a GameTest only when the thing under test genuinely needs the game —
+attachments actually persisting, events firing through the real bus, commands executing.
+
+### Writing a GameTest
+
+Every GameTest needs a structure template, even a logic-only one. `nwyfre:empty` (a 1x1x1 air
+template at `src/gametest/resources/data/nwyfre/structure/empty.nbt`) exists for that — reuse it.
+
+```java
+@GameTestHolder(Nwyfre.MODID)     // sets the default template namespace to "nwyfre"
+@PrefixGameTestTemplate(false)    // don't prefix template names with the class name
+public final class MyGameTests {
+
+    @GameTest(template = "empty")
+    public static void somethingHolds(GameTestHelper helper) {
+        ServerPlayer player = unplacedPlayer(helper);   // see below - do NOT use the mock helper
+        if (!someCondition) {
+            helper.fail("explain what was expected");
+        }
+        helper.succeed();   // required - a test that never succeeds fails on timeout
+    }
+}
+```
+
+#### Getting a player: do not use `makeMockServerPlayerInLevel()`
+
+`GameTestHelper.makeMockServerPlayerInLevel()` looks like the obvious choice and **does not work in
+this project.** It calls `PlayerList.placeNewPlayer`, which fires the join handlers of every loaded
+mod; KubeJS then tries to push `kubejs:sync_server_data` down a connection that cannot accept play
+payloads, and *every* test fails before reaching its own assertions:
+
+```
+Payload kubejs:sync_server_data may not be sent to the client!
+```
+
+Construct the player directly instead, without placing it. Attachments, events and persistence are
+all entity-level concerns and none of them need a connection:
+
+```java
+private static ServerPlayer unplacedPlayer(GameTestHelper helper) {
+    ServerLevel level = helper.getLevel();
+    return new ServerPlayer(
+            level.getServer(),
+            level,
+            new GameProfile(UUID.randomUUID(), "nwyfre-test-player"),
+            ClientInformation.createDefault());
+}
+```
+
+Nothing is registered anywhere, so there is nothing to clean up — and no deprecated API in sight.
+Copy `StageGameTests.unplacedPlayer`. If a test genuinely needs a *connected* player, it needs a
+different approach than a GameTest.
+
+Rules worth remembering:
+
+- **Always call `helper.succeed()`**, or the test fails on timeout rather than on its assertion.
+- **Use `nwyfre_test:` ids** for stages and other test data, so tests never depend on real content.
+- Avoid registering permanent event listeners. If a test needs one, gate it behind a flag that is
+  reset in `finally`, so a mid-test failure cannot leak behaviour into the next test (see
+  `StageGameTests.attachVetoListener`).
+- **Read the log, not just the exit code.** A GameTest server that fails to *start* still reports
+  `BUILD SUCCESSFUL`. Confirm the line `All N required tests passed :)` actually appears.
+- If startup dies on `DirectoryLock` / "another process has locked a portion of the file", an
+  orphaned dev server is still holding `run/world`. See the gotchas below.
+
+---
+
+## Test data vs. production data
+
+**The content author owns production data outright.** Editing the real Patchouli book, renaming an
+entry, rewriting prose — none of that may break a test. A test that asserts on real content turns
+every content edit into a build failure, so we do not write those.
+
+The split:
+
+- **Assertions about behaviour** go against **fixtures** in `src/test/resources`, which never
+  change. `fixtures/book/valid` and `fixtures/book/legacy` are stub books whose only job is to pin
+  down what the lint accepts and rejects.
+- **Assertions about production data** check **structural invariants only** — things an author
+  cannot legitimately violate. `BookOfNwyfreLayoutTest` checks the real book's *layout*, never its
+  content.
+
+Applying this to a new system:
+
+1. Build the check so it takes a path or root rather than hardcoding the production location.
+2. Test the check against a good fixture and a deliberately broken one.
+3. Point it at production data asserting only invariants.
+
+The broken fixture should reproduce a failure that actually happened. `fixtures/book/legacy`
+reproduces the `use_resource_pack: false` mistake that silently skipped the real book.
+
+---
+
+## Game stages
+
+Stages gate progression: recipes, item use, JEI visibility, Patchouli entries, InControl! rules.
+
+**Stage ids are free-form `ResourceLocation`s.** There is no registry of valid stages and nothing
+hardcodes a stage name, so a pack can invent `mypack:bronze_age` from a KubeJS script with no Java
+change. That is deliberate — don't add a stage registry without a concrete reason.
+
+### Reading stages
+
+```java
+if (Stages.has(player, ResourceLocation.fromNamespaceAndPath("nwyfre", "awakening"))) { ... }
+
+PlayerStages stages = Stages.get(player);
+stages.hasAll(required);   // every one    (an empty requirement passes)
+stages.hasAny(candidates); // at least one (an empty candidate set fails)
+```
+
+Safe on both sides. The client only knows what has been synced to it — fine for display and
+filtering, never trust it for authority.
+
+### Changing stages
+
+Server-side only, via `ServerPlayer`:
+
+```java
+boolean changed = Stages.grant(player, stage);
+boolean removed = Stages.revoke(player, stage);
+int cleared     = Stages.clear(player);
+```
+
+Each returns whether anything **actually** changed. `false` means either the player was already in
+that state, or a listener cancelled the event — callers should use it to skip redundant work.
+Persistence and client sync are handled inside; don't do either by hand.
+
+Operators and pack authors get `/nwyfre stage grant|revoke|clear|list` (level 2; `list` is open).
+
+### Reacting to stage changes
+
+`NwyfreStageChangeEvent` fires on the **game bus**, server-side, and is **cancellable**:
+
+```java
+@SubscribeEvent
+static void onStageChange(NwyfreStageChangeEvent event) {
+    if (event.isGrant() && event.getStage().equals(GATED)) {
+        event.setCanceled(true);   // veto it
+    }
+}
+```
+
+It fires only when the change would really alter the stage set — re-granting an owned stage fires
+nothing. Cancelling leaves the player untouched and makes the originating call return `false`.
+
+### Adding a new gate
+
+1. Read through `Stages`, never the attachment.
+2. Decide the side. Authority is server-side; the client copy is for display only.
+3. If the gate affects the client (JEI, Patchouli, tooltips), confirm the data is synced.
+4. Test the logic in JUnit with `nwyfre_test:` ids; add a GameTest only if it needs a live player.
+5. Document the stage in the Patchouli book if players need to know about it.
+
+---
+
+## Persistent player data
+
+**Use Data Attachments, not capabilities.** On NeoForge 1.21.1 capabilities are non-persistent
+behaviour lookups; attachments are what survive a save. Reserve `RegisterCapabilitiesEvent` for
+genuine behaviour lookups on items, blocks and entities.
+
+```java
+public static final Supplier<AttachmentType<PlayerStages>> PLAYER_STAGES =
+        ATTACHMENT_TYPES.register("player_stages", () -> AttachmentType
+                .builder(PlayerStages::new)
+                .serialize(PlayerStages.CODEC)   // omit and it will NOT persist
+                .copyOnDeath()                   // omit and it is lost on death
+                .build());
+```
+
+Register the `DeferredRegister` on the **mod** event bus in the `Nwyfre` constructor.
+
+Pitfalls:
+
+- `.serialize(...)` is what makes data persist. Without it, everything silently resets on reload.
+- `.copyOnDeath()` is what makes it survive dying. Progression almost always wants it.
+- Mutating the value in place does not mark the holder dirty — call `setData` afterwards.
+  `Stages.markChanged` is the pattern.
+- Attachments serialise under the NBT key `neoforge:attachments`, each under its registry id.
+  Useful for asserting persistence in a GameTest.
+
+---
+
+## Networking
+
+Payloads live in `...network`, are registered on `RegisterPayloadHandlersEvent` (mod bus), and are
+versioned via `event.registrar("1")`.
+
+```java
+public record MyPayload(...) implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<MyPayload> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Nwyfre.MODID, "my_payload"));
+    public static final StreamCodec<ByteBuf, MyPayload> STREAM_CODEC = StreamCodec.composite(...);
+}
+```
+
+**Never load client classes from a handler's enclosing class.** Reference the client class only from
+*inside* the handler body — it executes client-side only, so the class is never loaded on a
+dedicated server:
+
+```java
+registrar.playToClient(TYPE, STREAM_CODEC,
+        (payload, context) -> context.enqueueWork(() -> ClientThing.accept(payload)));
+```
+
+Stage sync sends the **whole set**, not a delta — it is tiny, and an absolute value cannot drift out
+of sync if a packet is missed around login. Resync points live in `StageSyncEvents` (login, respawn,
+dimension change); in-play changes are pushed by `Stages`.
+
+**Always unit-test a `StreamCodec` round trip.** A mismatched encode/decode pair desyncs clients
+silently instead of throwing. `StageSyncPayloadTest` is the pattern: encode, decode, and assert the
+buffer was fully consumed.
+
+---
+
+## Patchouli book layout
+
+Patchouli 1.20 removed the datapack content layout. The book is split across two trees:
+
+```
+src/main/resources/data/nwyfre/patchouli_books/book_of_nwyfre/book.json      <- definition only
+src/main/resources/assets/nwyfre/patchouli_books/book_of_nwyfre/en_us/
+        categories/<category>.json
+        entries/<category>/<entry>.json
+```
+
+`book.json` **must** set `"use_resource_pack": true`. Get this wrong and the book is skipped with a
+single log line — no crash, no build failure. `BookOfNwyfreLayoutTest` guards against it.
+
+Every mechanic, ritual, boss and talisman needs an entry (`CLAUDE.md` §4). Use `flag` /
+`advancement` locks so entries appear only once the player has earned them.
+
+---
+
+## Integration dependency policy
+
+| Scope | Meaning | Libraries |
+| :--- | :--- | :--- |
+| `implementation` | Structural. Nwyfre cannot run without it. | GeckoLib, Curios |
+| `compileOnly` + `localRuntime` | Optional. Compiled against, loaded in dev, never a published dependency. | JEI, KubeJS, Patchouli, Jade, InControl! |
+
+Versions live in `gradle.properties`, each with the Maven it came from. **Verify a version exists
+before pinning it** — check the repo's `maven-metadata.xml`, or Modrinth's
+`/v2/project/<slug>/version?loaders=["neoforge"]&game_versions=["1.21.1"]` for mods with no
+developer Maven.
+
+Guard optional integrations at runtime with `ModList.get().isLoaded("<modid>")` and keep each
+integration's code in its own class, so that class only loads when the mod is present.
+
+A hard dependency must also be declared in `src/main/templates/META-INF/neoforge.mods.toml`. Do that
+when code actually starts using it, not when the Gradle dependency is added — declaring it early
+makes the mod refuse to load over something nothing uses yet.
+
+---
+
+## Live traps
+
+**Only standing problems belong here** — things that can still bite tomorrow. Bugs that were found
+and fixed are not tracked; the fix and its reasoning live in a comment next to the code.
+
+- **`EventBusSubscriber.Bus` is deprecated for removal.** Omit `bus = ...`; NeoForge routes by event
+  type. Verify from the log — a misrouted mod-bus event leaves the handler silently unregistered:
+  `Subscribing @EventBusSubscriber class ... to the mod event bus`.
+- **KubeJS has unresolvable transitive deps** (`animated-gif-lib-for-java` declares the malformed
+  range `[animated-gif-lib-1.7,)`; `better-advanced-tooltips` is on no public Maven). Take it with
+  `transitive = false`; its shipped jar JarJars what it needs. Re-check on every version bump.
+- **`makeMockServerPlayerInLevel` breaks every GameTest** when the integrations are loaded, because
+  `placeNewPlayer` fires KubeJS's join handler. Build an unplaced `ServerPlayer` instead — see
+  [Writing a GameTest](#writing-a-gametest).
+- **Stopping a dev run can orphan the game JVM.** Killing the Gradle wrapper does not always kill
+  the forked server, and the survivor keeps `run/world/session.lock` held, so the next
+  `runServer` / `runGameTestServer` dies on `DirectoryLock`. Find it and kill it:
+
+  ```powershell
+  Get-CimInstance Win32_Process -Filter "Name like '%java%'" |
+    Where-Object { $_.CommandLine -match 'RunProgramArgs' } |
+    Select-Object ProcessId, CreationDate
+  ```
+
+- **`loadedMods` on a run config does not exclude jar mods.** It governs which dev source-set mods
+  are loaded; mods coming from `localRuntime`/`implementation` jars load regardless. There is no
+  quick way to run a dev task with the integrations switched off.
+- **A GameTest server that fails to start still reports `BUILD SUCCESSFUL`.** Only a *test* failure
+  produces a non-zero exit. Always check for `All N required tests passed :)`.
+- **Gradle 10 deprecations** are reported by the current build. Not urgent; expect noise on a
+  wrapper bump.

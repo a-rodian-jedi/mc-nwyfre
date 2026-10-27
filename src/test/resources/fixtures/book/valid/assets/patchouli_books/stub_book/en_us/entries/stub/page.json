@@ -1,0 +1,8 @@
+{
+  "name": "stub.entry",
+  "category": "stub:stub",
+  "icon": "minecraft:book",
+  "pages": [
+    { "type": "patchouli:text", "text": "stub.entry.page1" }
+  ]
+}

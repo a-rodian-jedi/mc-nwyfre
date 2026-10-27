@@ -1,0 +1,7 @@
+{
+  "name": "stub.entry",
+  "category": "stub:missing_category",
+  "pages": [
+    { "type": "patchouli:text", "text": "stub.entry.page1" }
+  ]
+}

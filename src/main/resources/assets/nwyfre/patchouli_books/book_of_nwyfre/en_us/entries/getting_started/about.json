@@ -1,0 +1,13 @@
+{
+  "name": "nwyfre.entry.about",
+  "category": "nwyfre:getting_started",
+  "icon": "minecraft:book",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "nwyfre.entry.about",
+      "text": "nwyfre.entry.about.page1"
+    }
+  ]
+}

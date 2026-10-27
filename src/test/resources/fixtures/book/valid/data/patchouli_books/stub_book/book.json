@@ -1,0 +1,7 @@
+{
+  "name": "book.stub.name",
+  "landing_text": "book.stub.landing_text",
+  "version": 1,
+  "i18n": true,
+  "use_resource_pack": true
+}

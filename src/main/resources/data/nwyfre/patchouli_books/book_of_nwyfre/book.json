@@ -1,0 +1,13 @@
+{
+  "name": "book.nwyfre.book_of_nwyfre.name",
+  "landing_text": "book.nwyfre.book_of_nwyfre.landing_text",
+  "subtitle": "book.nwyfre.book_of_nwyfre.subtitle",
+  "version": 1,
+  "i18n": true,
+  "use_resource_pack": true,
+  "text_color": "3B2412",
+  "header_color": "6A3B1C",
+  "nameplate_color": "D9C7A3",
+  "link_color": "1F5673",
+  "link_hover_color": "3E89A8"
+}
