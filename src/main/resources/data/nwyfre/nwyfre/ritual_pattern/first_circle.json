@@ -1,0 +1,29 @@
+{
+  "offset_y": 0,
+  "layers": [
+    [
+      "gEg",
+      "_A_",
+      "g_g"
+    ]
+  ],
+  "mapping": {
+    "_": {
+      "type": "nwyfre:any"
+    },
+    "A": {
+      "type": "nwyfre:altar"
+    },
+    "g": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:chalk_glyphs",
+      "display": "nwyfre:chalk_glyph"
+    },
+    "E": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:ritual_bowls",
+      "display": "nwyfre:ritual_bowl",
+      "offering": "nwyfre:earth"
+    }
+  }
+}

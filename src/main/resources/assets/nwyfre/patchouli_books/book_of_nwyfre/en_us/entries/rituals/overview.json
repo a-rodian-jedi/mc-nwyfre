@@ -1,0 +1,23 @@
+{
+  "name": "nwyfre.entry.ritual_overview",
+  "category": "nwyfre:rituals",
+  "icon": "nwyfre:ritual_altar",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_overview.page1",
+      "title": "nwyfre.entry.ritual_overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_overview.page2"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "nwyfre.entry.ritual_overview.circle",
+      "multiblock_id": "nwyfre:pattern/nwyfre/lesser_circle",
+      "text": "nwyfre.entry.ritual_overview.page3"
+    }
+  ]
+}

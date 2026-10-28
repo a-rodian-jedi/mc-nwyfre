@@ -1,0 +1,22 @@
+{
+  "name": "nwyfre.entry.ritual_offerings",
+  "category": "nwyfre:rituals",
+  "icon": "nwyfre:ritual_bowl",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_offerings.page1",
+      "title": "nwyfre.entry.ritual_offerings"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_offerings.page2"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "nwyfre:ritual_bowl",
+      "text": "nwyfre.entry.ritual_offerings.page3"
+    }
+  ]
+}

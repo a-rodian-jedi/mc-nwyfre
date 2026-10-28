@@ -1,0 +1,39 @@
+{
+  "type": "nwyfre:ritual",
+  "pattern": "nwyfre:first_circle",
+  "activation_item": {
+    "item": "minecraft:stick"
+  },
+  "duration": 60,
+  "offerings": {
+    "nwyfre:earth": {
+      "item": "minecraft:dirt"
+    }
+  },
+  "effect": {
+    "type": "nwyfre:give_item",
+    "result": {
+      "id": "minecraft:amethyst_shard",
+      "count": 1
+    }
+  },
+  "augments": [
+    {
+      "requires": [
+        {
+          "item": "minecraft:glowstone_dust"
+        }
+      ],
+      "effect": {
+        "type": "nwyfre:give_item",
+        "result": {
+          "id": "minecraft:amethyst_shard",
+          "count": 4
+        }
+      }
+    }
+  ],
+  "icon": {
+    "id": "minecraft:amethyst_shard"
+  }
+}

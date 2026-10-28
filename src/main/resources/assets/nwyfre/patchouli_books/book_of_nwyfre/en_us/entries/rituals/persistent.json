@@ -1,0 +1,17 @@
+{
+  "name": "nwyfre.entry.ritual_persistent",
+  "category": "nwyfre:rituals",
+  "icon": "minecraft:candle",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_persistent.page1",
+      "title": "nwyfre.entry.ritual_persistent"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_persistent.page2"
+    }
+  ]
+}

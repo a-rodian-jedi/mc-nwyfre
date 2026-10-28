@@ -1,0 +1,47 @@
+{
+  "offset_y": 1,
+  "layers": [
+    [
+      "gEg",
+      "WAa",
+      "gFg"
+    ]
+  ],
+  "mapping": {
+    "_": {
+      "type": "nwyfre:any"
+    },
+    "A": {
+      "type": "nwyfre:altar"
+    },
+    "g": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:chalk_glyphs",
+      "display": "nwyfre:chalk_glyph"
+    },
+    "E": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:ritual_bowls",
+      "display": "nwyfre:ritual_bowl",
+      "offering": "nwyfre_test:earth"
+    },
+    "a": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:ritual_bowls",
+      "display": "nwyfre:ritual_bowl",
+      "offering": "nwyfre_test:air"
+    },
+    "F": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:ritual_bowls",
+      "display": "nwyfre:ritual_bowl",
+      "offering": "nwyfre_test:fire"
+    },
+    "W": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:ritual_bowls",
+      "display": "nwyfre:ritual_bowl",
+      "offering": "nwyfre_test:water"
+    }
+  }
+}

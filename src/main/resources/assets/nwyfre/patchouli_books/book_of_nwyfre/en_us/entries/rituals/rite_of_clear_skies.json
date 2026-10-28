@@ -1,0 +1,17 @@
+{
+  "name": "nwyfre.entry.rite_of_clear_skies",
+  "category": "nwyfre:rituals",
+  "icon": "minecraft:wheat_seeds",
+  "sortnum": 11,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.rite_of_clear_skies.page1",
+      "title": "nwyfre.entry.rite_of_clear_skies"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.rite_of_clear_skies.page2"
+    }
+  ]
+}

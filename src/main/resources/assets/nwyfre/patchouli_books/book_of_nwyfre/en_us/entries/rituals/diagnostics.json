@@ -1,0 +1,13 @@
+{
+  "name": "nwyfre.entry.ritual_diagnostics",
+  "category": "nwyfre:rituals",
+  "icon": "minecraft:spyglass",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_diagnostics.page1",
+      "title": "nwyfre.entry.ritual_diagnostics"
+    }
+  ]
+}

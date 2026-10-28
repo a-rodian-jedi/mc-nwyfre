@@ -1,0 +1,96 @@
+# Nwyfre Ritual System
+
+Inspirations: Occultism, Ars Nouveau
+
+Purpose(s): Summons, Enchantment, Item Creation, Weather Control, World Interaction (time skips, grow plants, protection from spawns, etc)
+
+## Types of Rituals
+
+There are Persistent Rituals and one-shot Rituals (or just Rituals). Rituals will require drawing symbols on the ground in certain spots, bowls, elements, and offerings.
+
+## Chalks
+
+Chalks are infused with various materials that may tie them to certain elements. The symbols drawn will just be random alchemical symbols from a code perspective. This art will be added later.
+
+## Bowls
+
+Bowls might be required to be made out of different materials like wood, basalt, or gold, depending on the ritual.
+
+## Offerings
+
+This could be items or killed mobs. Offered items will be put in bowls. Usually the items will speak to certain elements.
+
+## Elements by Direction
+
+North = Earth
+East = Air
+South = Fire
+West = Water
+
+When placing items that correspond to an element, they should generally follow these positions. If a ritual has no use for a certain element, that space will be blank.
+
+## Persistent Rituals
+
+For Persistent Rituals, the center item will be a candle. If the candle is lit, the ritual is active. If it is off, the ritual is off. In the case of creating it, you would use the candle as the activation_item in Occultism terms, in the center of the ritual. The candle would then be "imbued" or enchanted with the ritual. It will burn for a certain amount of time and waste away.
+
+## Prerequisites
+
+Prerequisites could be stage, time of day, moon phase, weather, biome, elevation, or immediate environment (on dirt, in water) or any combination of these.
+
+## Diagnostics
+
+Diagnostics should be included to be helpful to the players as seen in Occultism.
+
+## Augments
+
+Rituals may take items as 'augments' like in Ars Nouveau, and this will change exactly how the ritual behaves.
+
+Augments will be added to a chest or container within 3 blocks of the ritual's center.
+
+## Editable/Modifiable
+
+Rituals should be editable and modifiable. The outcome could be strings that the code will understand, and the rituals themselves will be recipes like Occultism does. This means that rituals and their outcomes are modifiable within what the code is able to perform.
+
+This data must also account for augments. This will be a JSON recipe.
+
+## Example Rituals
+
+- Accelerate time to Sunrise/Sunset, much like sleeping through the day.
+- Make it rain or become clear
+- (Persistent) A candle that does a 16x16x16 Heal Over Time
+
+## v0
+
+v0 is just getting the framework for the ritual system in Nwyfre's code. Where it needs items, it should use vanilla Minecraft items.
+
+It can use custom particle effects defined in code.
+
+v0 simply defines the framework for defining the JSON recipe language, the abstractions around building Rituals in code, the base rules of the ritual system, etc.
+
+Some items in v0 will require 'placeholders'. Example: without Chalk (a custom item I'll need to make), we could instead use a Stick. Any placeholder items should be documented here in the spec so we know to change them later. Note what item is being used as a placeholder, and what custom item is meant to replace it.
+
+## v1
+
+v1 will update v0 to use custom items created by myself. This could introduce additional stages or facets to the ritual system but will not change the framework underneath. v0's work should all still be valid.
+
+## Testing
+
+v0 should have a stubbed GameTest. Given stubbed recipe X, server should do Y. This will verify the parsing, rules, etc, work as expected. There may need to be a few tests around the Ritual system to ensure each feature works as expected, but do not create bloat.
+
+## Placeholders
+
+v0 ships no bespoke items. Everything a ritual consumes is vanilla, and the only new blocks are the
+three the framework cannot work without.
+
+| v0 placeholder | v1 replacement |
+| :--- | :--- |
+| `nwyfre:chalk_glyph` block item -- you place the glyph directly | a real `nwyfre:chalk` item that draws glyphs on use and carries an element. (Diverges from the Stick suggestion above: a block item is strictly less v0 work and the pattern format cannot tell the difference.) |
+| one neutral `nwyfre:chalk_glyph` block | four elemental glyph blocks, added into `#nwyfre:chalk_glyphs` |
+| one neutral `nwyfre:ritual_bowl` block | `wood` / `basalt` / `gold` bowls, added into `#nwyfre:ritual_bowls` |
+| `minecraft:candle` as the persistent activation item | `nwyfre:ritual_candle` |
+| `minecraft:clock`, `minecraft:wheat_seeds`, `minecraft:candle` as example activation items | real Nwyfre foci |
+| vanilla items and `c:` tags in the example offerings | elemental offering items |
+| vanilla textures on all three blocks (`chiseled_stone_bricks`, `oak_planks`, `calcite`) | real Nwyfre art. Pointing at textures that do not exist yet fills the client log with load errors, so v0 borrows. |
+
+Because patterns match on **block-or-tag** predicates and the tags already exist, every one of these
+swaps adds blocks to a tag rather than changing the pattern format. v0 pattern files keep working.

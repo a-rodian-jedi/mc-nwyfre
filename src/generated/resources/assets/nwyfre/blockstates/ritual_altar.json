@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "nwyfre:block/ritual_altar"
+    },
+    "lit=true": {
+      "model": "nwyfre:block/ritual_altar"
+    }
+  }
+}

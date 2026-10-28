@@ -1,0 +1,38 @@
+{
+  "type": "nwyfre:ritual",
+  "pattern": "nwyfre:lesser_circle",
+  "activation_item": {
+    "item": "minecraft:candle"
+  },
+  "duration": 200,
+  "persistent": true,
+  "burn_ticks": 24000,
+  "offerings": {
+    "nwyfre:earth": {
+      "item": "minecraft:golden_carrot"
+    },
+    "nwyfre:water": {
+      "item": "minecraft:glistering_melon_slice"
+    }
+  },
+  "effect": {
+    "type": "nwyfre:area_effect",
+    "effect": "minecraft:regeneration",
+    "amplifier": 0,
+    "radius": 8,
+    "interval": 60
+  },
+  "augments": [
+    {
+      "requires": [
+        {
+          "item": "minecraft:diamond"
+        }
+      ],
+      "potency": 4
+    }
+  ],
+  "icon": {
+    "id": "minecraft:candle"
+  }
+}

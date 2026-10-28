@@ -1,0 +1,17 @@
+{
+  "name": "nwyfre.entry.ritual_augments",
+  "category": "nwyfre:rituals",
+  "icon": "minecraft:chest",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_augments.page1",
+      "title": "nwyfre.entry.ritual_augments"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_augments.page2"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "type": "nwyfre:ritual",
+  "pattern": "nwyfre:lesser_circle",
+  "activation_item": {
+    "item": "minecraft:clock"
+  },
+  "duration": 100,
+  "offerings": {
+    "nwyfre:fire": {
+      "tag": "minecraft:coals"
+    },
+    "nwyfre:air": {
+      "item": "minecraft:feather"
+    }
+  },
+  "prerequisites": {
+    "type": "nwyfre:time_of_day",
+    "time": "night"
+  },
+  "effect": {
+    "type": "nwyfre:set_time",
+    "time": "sunrise"
+  },
+  "augments": [
+    {
+      "requires": [
+        {
+          "item": "minecraft:ender_eye"
+        }
+      ],
+      "effect": {
+        "type": "nwyfre:set_time",
+        "time": "sunset"
+      }
+    }
+  ],
+  "icon": {
+    "id": "minecraft:clock"
+  }
+}

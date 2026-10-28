@@ -6,6 +6,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+import com.nwyfre.nwyfre.ritual.RitualConfig;
+
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Neo's config APIs
 public class Config {
@@ -28,7 +30,13 @@ public class Config {
             .comment("A list of items to log on common setup.")
             .defineListAllowEmpty("items", List.of("minecraft:iron_ingot"), () -> "", Config::validateItemName);
 
-    static final ModConfigSpec SPEC = BUILDER.build();
+    /**
+     * Ritual system tuning. Built into the same spec so NeoForge loads one file, but the ritual
+     * code owns the definitions -- see {@link com.nwyfre.nwyfre.ritual.RitualConfig}.
+     */
+    public static final RitualConfig RITUALS = new RitualConfig(BUILDER);
+
+    public static final ModConfigSpec SPEC = BUILDER.build();
 
     private static boolean validateItemName(final Object obj) {
         return obj instanceof String itemName && BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemName));

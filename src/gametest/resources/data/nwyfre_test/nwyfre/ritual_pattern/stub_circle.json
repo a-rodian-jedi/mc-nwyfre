@@ -1,0 +1,25 @@
+{
+  "layers": [
+    [
+      "_E_",
+      "_Ag"
+    ]
+  ],
+  "mapping": {
+    "_": {
+      "type": "nwyfre:any"
+    },
+    "A": {
+      "type": "nwyfre:altar"
+    },
+    "g": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:chalk_glyphs"
+    },
+    "E": {
+      "type": "nwyfre:tag",
+      "tag": "nwyfre:ritual_bowls",
+      "offering": "nwyfre_test:test_earth"
+    }
+  }
+}

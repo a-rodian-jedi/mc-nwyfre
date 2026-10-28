@@ -1,0 +1,33 @@
+{
+  "type": "nwyfre:ritual",
+  "pattern": "nwyfre_test:stub_circle",
+  "activation_item": {
+    "item": "minecraft:nether_star"
+  },
+  "duration": 20,
+  "offerings": {
+    "nwyfre_test:test_earth": {
+      "item": "minecraft:wheat"
+    }
+  },
+  "prerequisites": {
+    "type": "nwyfre:all_of",
+    "terms": [
+      {
+        "type": "nwyfre:stage",
+        "stages": [
+          "nwyfre_test:unobtainable"
+        ]
+      },
+      {
+        "type": "nwyfre:time_of_day",
+        "time": "night"
+      }
+    ]
+  },
+  "effect": {
+    "type": "nwyfre:set_weather",
+    "weather": "thunder",
+    "duration": 100
+  }
+}

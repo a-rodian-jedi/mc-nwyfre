@@ -1,0 +1,18 @@
+{
+  "type": "nwyfre:ritual",
+  "pattern": "nwyfre_test:stub_circle",
+  "activation_item": {
+    "item": "minecraft:clock"
+  },
+  "duration": 20,
+  "offerings": {
+    "nwyfre_test:test_earth": {
+      "item": "minecraft:wheat"
+    }
+  },
+  "effect": {
+    "type": "nwyfre:set_weather",
+    "weather": "clear",
+    "duration": 100
+  }
+}

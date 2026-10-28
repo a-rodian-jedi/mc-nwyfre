@@ -1,0 +1,51 @@
+{
+  "type": "nwyfre:ritual",
+  "pattern": "nwyfre:lesser_circle",
+  "activation_item": {
+    "item": "minecraft:wheat_seeds"
+  },
+  "duration": 100,
+  "offerings": {
+    "nwyfre:water": {
+      "item": "minecraft:water_bucket"
+    },
+    "nwyfre:air": {
+      "item": "minecraft:feather"
+    }
+  },
+  "prerequisites": {
+    "type": "nwyfre:all_of",
+    "terms": [
+      {
+        "type": "nwyfre:block_at",
+        "blocks": "#minecraft:dirt"
+      },
+      {
+        "type": "nwyfre:dimension",
+        "dimension": "minecraft:overworld"
+      }
+    ]
+  },
+  "effect": {
+    "type": "nwyfre:set_weather",
+    "weather": "clear",
+    "duration": 12000
+  },
+  "augments": [
+    {
+      "requires": [
+        {
+          "item": "minecraft:nautilus_shell"
+        }
+      ],
+      "effect": {
+        "type": "nwyfre:set_weather",
+        "weather": "thunder",
+        "duration": 6000
+      }
+    }
+  ],
+  "icon": {
+    "id": "minecraft:wheat_seeds"
+  }
+}

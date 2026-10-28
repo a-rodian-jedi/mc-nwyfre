@@ -1,0 +1,21 @@
+{
+  "type": "nwyfre:ritual",
+  "pattern": "nwyfre_test:stub_circle",
+  "activation_item": {
+    "item": "minecraft:candle"
+  },
+  "duration": 20,
+  "persistent": true,
+  "burn_ticks": 100,
+  "offerings": {
+    "nwyfre_test:test_earth": {
+      "item": "minecraft:wheat"
+    }
+  },
+  "effect": {
+    "type": "nwyfre:area_effect",
+    "effect": "minecraft:regeneration",
+    "radius": 4,
+    "interval": 20
+  }
+}

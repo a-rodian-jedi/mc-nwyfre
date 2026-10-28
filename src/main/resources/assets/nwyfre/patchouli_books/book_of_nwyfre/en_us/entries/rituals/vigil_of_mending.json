@@ -1,0 +1,17 @@
+{
+  "name": "nwyfre.entry.vigil_of_mending",
+  "category": "nwyfre:rituals",
+  "icon": "minecraft:candle",
+  "sortnum": 12,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.vigil_of_mending.page1",
+      "title": "nwyfre.entry.vigil_of_mending"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.vigil_of_mending.page2"
+    }
+  ]
+}

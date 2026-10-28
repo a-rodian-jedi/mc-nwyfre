@@ -1,0 +1,22 @@
+{
+  "name": "nwyfre.entry.ritual_circles",
+  "category": "nwyfre:rituals",
+  "icon": "nwyfre:chalk_glyph",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_circles.page1",
+      "title": "nwyfre.entry.ritual_circles"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.ritual_circles.page2"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "nwyfre:chalk_glyph",
+      "text": "nwyfre.entry.ritual_circles.page3"
+    }
+  ]
+}

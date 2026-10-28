@@ -1,0 +1,17 @@
+{
+  "name": "nwyfre.entry.rite_of_first_breath",
+  "category": "nwyfre:rituals",
+  "icon": "minecraft:amethyst_shard",
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "nwyfre.entry.rite_of_first_breath",
+      "text": "nwyfre.entry.rite_of_first_breath.page1"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.rite_of_first_breath.page2"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "nwyfre.entry.rite_of_sunrise",
+  "category": "nwyfre:rituals",
+  "icon": "minecraft:clock",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.rite_of_sunrise.page1",
+      "title": "nwyfre.entry.rite_of_sunrise"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "nwyfre.entry.rite_of_sunrise.page2"
+    }
+  ]
+}
