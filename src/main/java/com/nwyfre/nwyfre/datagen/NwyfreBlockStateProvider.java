@@ -2,6 +2,7 @@ package com.nwyfre.nwyfre.datagen;
 
 import com.nwyfre.nwyfre.Nwyfre;
 import com.nwyfre.nwyfre.block.RitualAltarBlock;
+import com.nwyfre.nwyfre.block.ogham.OghamGlyphBlock;
 import com.nwyfre.nwyfre.registry.NwyfreBlocks;
 
 import net.minecraft.core.Direction;
@@ -9,8 +10,10 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredBlock;
 
 /**
  * Block and block-item models.
@@ -53,6 +56,39 @@ public class NwyfreBlockStateProvider extends BlockStateProvider {
         // A flat block reads as nothing in an inventory slot, so the item uses a sprite instead.
         itemModels().withExistingParent("chalk_glyph", "item/generated")
                 .texture("layer0", ResourceLocation.withDefaultNamespace("item/paper"));
+
+        NwyfreBlocks.oghamGlyphs().forEach(this::oghamGlyph);
+    }
+
+    /**
+     * One Ogham glyph: a flat plate wearing its own sprite, turned to match the stem axis.
+     *
+     * <p>Only one model and one texture per character. The texture is drawn with its stem running
+     * east-west, and the Z variant is the same model rotated a quarter turn -- so there is no
+     * second sprite to keep in step, and the stem stays dead centre under rotation, which is what
+     * keeps a line of glyphs joined.
+     *
+     * <p>No {@code uvlock}: the texture must turn <em>with</em> the model, not stay put.
+     */
+    private void oghamGlyph(DeferredBlock<OghamGlyphBlock> block) {
+        String name = block.getId().getPath();
+        ResourceLocation texture = Nwyfre.id("block/" + name);
+
+        BlockModelBuilder model = models().getBuilder("block/" + name)
+                .texture("particle", texture)
+                .texture("side", texture)
+                .texture("top", texture)
+                .renderType("cutout");
+        box(model, 0, 0, 0, 16, 0.25F, 16);
+
+        getVariantBuilder(block.get()).forAllStates(state -> ConfiguredModel.builder()
+                .modelFile(model)
+                .rotationY(state.getValue(OghamGlyphBlock.AXIS) == Direction.Axis.Z ? 90 : 0)
+                .build());
+
+        // The glyph sprite is already a flat symbol, so it makes a better item icon than the
+        // block ever could -- unlike chalk_glyph above, which would be a blank square.
+        itemModels().withExistingParent(name, "item/generated").texture("layer0", texture);
     }
 
     private ModelFile altarModel() {

@@ -28,7 +28,10 @@ public class NwyfreBlockTagsProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(NwyfreTags.Blocks.RITUAL_ALTARS).add(NwyfreBlocks.RITUAL_ALTAR.get());
         tag(NwyfreTags.Blocks.RITUAL_BOWLS).add(NwyfreBlocks.RITUAL_BOWL.get());
-        tag(NwyfreTags.Blocks.CHALK_GLYPHS).add(NwyfreBlocks.CHALK_GLYPH.get());
+        // Every Ogham glyph counts as a drawn symbol, so a circle written in Ogham satisfies the
+        // same pattern cells a plain chalk mark does.
+        var glyphs = tag(NwyfreTags.Blocks.CHALK_GLYPHS).add(NwyfreBlocks.CHALK_GLYPH.get());
+        NwyfreBlocks.oghamGlyphs().forEach(glyph -> glyphs.add(glyph.get()));
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(NwyfreBlocks.RITUAL_ALTAR.get());
         tag(BlockTags.NEEDS_STONE_TOOL).add(NwyfreBlocks.RITUAL_ALTAR.get());

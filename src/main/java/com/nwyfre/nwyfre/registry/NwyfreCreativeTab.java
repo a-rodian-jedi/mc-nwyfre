@@ -23,6 +23,7 @@ public final class NwyfreCreativeTab {
                         output.accept(NwyfreItems.RITUAL_ALTAR.get());
                         output.accept(NwyfreItems.RITUAL_BOWL.get());
                         output.accept(NwyfreItems.CHALK_GLYPH.get());
+                        NwyfreItems.OGHAM_GLYPHS.forEach(glyph -> output.accept(glyph.get()));
                     })
                     .build());
 

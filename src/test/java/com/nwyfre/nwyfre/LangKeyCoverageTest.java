@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.nwyfre.nwyfre.registry.NwyfreBlocks;
 import com.nwyfre.nwyfre.ritual.Element;
 import com.nwyfre.nwyfre.ritual.RitualEffect;
 import com.nwyfre.nwyfre.ritual.effect.WorldEffects;
@@ -178,12 +179,15 @@ class LangKeyCoverageTest {
     @Test
     void everyRegisteredBlockHasAName() {
         // Datagen does not produce the language file, so a new block ships untranslated unless
-        // somebody remembers. This is that somebody.
-        assertKeysExist(List.of(
-                "block.nwyfre.ritual_altar",
-                "block.nwyfre.ritual_bowl",
-                "block.nwyfre.chalk_glyph",
-                "itemGroup.nwyfre.main"));
+        // somebody remembers. This is that somebody -- and it reads the real registration list
+        // rather than a copy, so it covers blocks added after this test was written. Ids come off
+        // the DeferredBlock without resolving it, which is what makes this work with no registry.
+        List<String> keys = new ArrayList<>(NwyfreBlocks.all().stream()
+                .map(block -> "block.nwyfre." + block.getId().getPath())
+                .toList());
+        keys.add("itemGroup.nwyfre.main");
+
+        assertKeysExist(keys);
     }
 
     @Test

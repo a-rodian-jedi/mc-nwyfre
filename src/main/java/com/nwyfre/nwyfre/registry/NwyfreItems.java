@@ -1,8 +1,12 @@
 package com.nwyfre.nwyfre.registry;
 
+import java.util.List;
+
 import com.nwyfre.nwyfre.Nwyfre;
 
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -22,6 +26,15 @@ public final class NwyfreItems {
     public static final DeferredItem<BlockItem> RITUAL_BOWL = ITEMS.registerSimpleBlockItem(NwyfreBlocks.RITUAL_BOWL);
     public static final DeferredItem<BlockItem> CHALK_GLYPH = ITEMS.registerSimpleBlockItem(NwyfreBlocks.CHALK_GLYPH);
 
+    /** One item per Ogham glyph, in writing order. */
+    public static final List<DeferredItem<BlockItem>> OGHAM_GLYPHS = NwyfreBlocks.oghamGlyphs().stream()
+            .map(NwyfreItems::simpleBlockItem)
+            .toList();
+
     private NwyfreItems() {
+    }
+
+    private static DeferredItem<BlockItem> simpleBlockItem(DeferredBlock<? extends Block> block) {
+        return ITEMS.registerSimpleBlockItem(block);
     }
 }

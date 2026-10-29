@@ -1,11 +1,17 @@
 package com.nwyfre.nwyfre.registry;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.nwyfre.nwyfre.Nwyfre;
 import com.nwyfre.nwyfre.block.ChalkGlyphBlock;
 import com.nwyfre.nwyfre.block.RitualAltarBlock;
 import com.nwyfre.nwyfre.block.RitualBowlBlock;
+import com.nwyfre.nwyfre.block.ogham.OghamGlyphBlock;
+import com.nwyfre.nwyfre.block.ogham.OghamLetter;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -55,19 +61,61 @@ public final class NwyfreBlocks {
     public static final DeferredBlock<ChalkGlyphBlock> CHALK_GLYPH = BLOCKS.registerBlock(
             "chalk_glyph",
             ChalkGlyphBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.QUARTZ)
-                    .instabreak()
-                    .sound(SoundType.WOOL)
-                    .noCollission()
-                    .noOcclusion()
-                    .pushReaction(PushReaction.DESTROY));
+            chalkProperties());
+
+    /**
+     * A bare stem with no character on it. Punctuation: it carries the line between words and out
+     * to the ends of an inscription, which real Ogham does with the edge of the stone itself.
+     */
+    public static final DeferredBlock<OghamGlyphBlock> OGHAM_STEM = BLOCKS.registerBlock(
+            "ogham_stem",
+            OghamGlyphBlock::new,
+            chalkProperties());
+
+    /** One block per character, so a ritual pattern can demand a specific letter. */
+    public static final Map<OghamLetter, DeferredBlock<OghamGlyphBlock>> OGHAM = registerOgham();
 
     private NwyfreBlocks() {
     }
 
+    private static Map<OghamLetter, DeferredBlock<OghamGlyphBlock>> registerOgham() {
+        Map<OghamLetter, DeferredBlock<OghamGlyphBlock>> blocks = new EnumMap<>(OghamLetter.class);
+        for (OghamLetter letter : OghamLetter.values()) {
+            blocks.put(letter, BLOCKS.registerBlock(
+                    letter.blockName(), OghamGlyphBlock::new, chalkProperties()));
+        }
+        return Collections.unmodifiableMap(blocks);
+    }
+
+    /**
+     * Fresh properties per block. These are mutable builders, so handing the same instance to two
+     * blocks makes them share state -- always build a new one.
+     */
+    private static BlockBehaviour.Properties chalkProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.QUARTZ)
+                .instabreak()
+                .sound(SoundType.WOOL)
+                .noCollission()
+                .noOcclusion()
+                .pushReaction(PushReaction.DESTROY);
+    }
+
+    /** Every glyph block, in writing order: the bare stem, then the alphabet. */
+    public static List<DeferredBlock<OghamGlyphBlock>> oghamGlyphs() {
+        List<DeferredBlock<OghamGlyphBlock>> glyphs = new ArrayList<>();
+        glyphs.add(OGHAM_STEM);
+        for (OghamLetter letter : OghamLetter.values()) {
+            glyphs.add(OGHAM.get(letter));
+        }
+        return List.copyOf(glyphs);
+    }
+
     /** Every block registered here, for datagen providers that iterate the whole set. */
     public static List<DeferredBlock<? extends Block>> all() {
-        return List.of(RITUAL_ALTAR, RITUAL_BOWL, CHALK_GLYPH);
+        List<DeferredBlock<? extends Block>> blocks = new ArrayList<>(
+                List.of(RITUAL_ALTAR, RITUAL_BOWL, CHALK_GLYPH));
+        blocks.addAll(oghamGlyphs());
+        return List.copyOf(blocks);
     }
 }

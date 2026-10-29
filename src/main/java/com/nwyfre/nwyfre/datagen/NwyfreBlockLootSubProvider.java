@@ -28,6 +28,7 @@ public class NwyfreBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(NwyfreBlocks.RITUAL_ALTAR.get());
         dropSelf(NwyfreBlocks.RITUAL_BOWL.get());
         dropSelf(NwyfreBlocks.CHALK_GLYPH.get());
+        NwyfreBlocks.oghamGlyphs().forEach(glyph -> dropSelf(glyph.get()));
     }
 
     @Override

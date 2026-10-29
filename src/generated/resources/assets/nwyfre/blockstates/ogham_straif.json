@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "nwyfre:block/ogham_straif"
+    },
+    "axis=z": {
+      "model": "nwyfre:block/ogham_straif",
+      "y": 90
+    }
+  }
+}

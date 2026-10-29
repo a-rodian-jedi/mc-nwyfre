@@ -15,6 +15,7 @@ the doc.
 - [Test data vs. production data](#test-data-vs-production-data)
 - [Game stages](#game-stages)
 - [Rituals](#rituals)
+- [Ogham glyphs](#ogham-glyphs)
 - [Persistent player data](#persistent-player-data)
 - [Networking](#networking)
 - [Patchouli book layout](#patchouli-book-layout)
@@ -263,6 +264,33 @@ the recipe says *what* goes in it. Consequences worth knowing:
 
 Both registries are real registries, so another mod can contribute to them. `nwyfre:run_command` is
 the escape hatch for packs that need an outcome Nwyfre has no effect for.
+
+### Ogham glyphs
+
+The glyph blocks are the Ogham alphabet: 25 letters (`OghamLetter`) plus `ogham_stem`, a bare stem
+carrying no character. All 26 are `OghamGlyphBlock` and all go into `#nwyfre:chalk_glyphs`, so a
+pattern can demand a specific letter with `nwyfre:block` or any glyph at all with `nwyfre:tag`, and
+every circle written before they existed still matches.
+
+**The stem is the whole trick.** Each texture draws its stem edge-to-edge across the exact vertical
+centre (rows 7 and 8 of 16), so glyphs sharing an axis join into one unbroken line the way Ogham
+runs along the edge of a stone. Two consequences:
+
+- **Move the stem off centre and the line breaks at every block boundary.** `OghamLetterTest` only
+  checks the sprites exist; the centring is held by `tools/generate_ogham_textures.py`, which is
+  also where the alphabet's stroke geometry lives.
+- **One texture per letter, drawn for the X axis.** `axis=z` is the same model turned 90° in the
+  blockstate, with **no `uvlock`** — the texture has to turn *with* the model. A second sprite would
+  only be something to keep in step.
+
+A glyph picks its axis at placement from `OghamGlyphBlock.chooseAxis`: it joins a line already
+running through that position, and falls back to the player's facing when there is nothing to join
+or when two lines cross. Only the *continuing* neighbour counts — a glyph whose stem runs across the
+shared axis is a different line passing by.
+
+Adding or redrawing a glyph means editing the alphabet in **both** `OghamLetter` and the generator
+script, then re-running it. `OghamLetterTest.everyLetterHasATexture` is what catches the two
+drifting apart; without it a missing sprite renders as the missing-texture checkerboard in silence.
 
 ### Prerequisites, not ICondition
 

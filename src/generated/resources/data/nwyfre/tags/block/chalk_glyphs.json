@@ -1,5 +1,31 @@
 {
   "values": [
-    "nwyfre:chalk_glyph"
+    "nwyfre:chalk_glyph",
+    "nwyfre:ogham_stem",
+    "nwyfre:ogham_beith",
+    "nwyfre:ogham_luis",
+    "nwyfre:ogham_fearn",
+    "nwyfre:ogham_sail",
+    "nwyfre:ogham_nion",
+    "nwyfre:ogham_uath",
+    "nwyfre:ogham_dair",
+    "nwyfre:ogham_tinne",
+    "nwyfre:ogham_coll",
+    "nwyfre:ogham_ceirt",
+    "nwyfre:ogham_muin",
+    "nwyfre:ogham_gort",
+    "nwyfre:ogham_ngeadal",
+    "nwyfre:ogham_straif",
+    "nwyfre:ogham_ruis",
+    "nwyfre:ogham_ailm",
+    "nwyfre:ogham_onn",
+    "nwyfre:ogham_ur",
+    "nwyfre:ogham_edad",
+    "nwyfre:ogham_idad",
+    "nwyfre:ogham_eabhadh",
+    "nwyfre:ogham_ifin",
+    "nwyfre:ogham_uilleann",
+    "nwyfre:ogham_or",
+    "nwyfre:ogham_eamhancholl"
   ]
 }
